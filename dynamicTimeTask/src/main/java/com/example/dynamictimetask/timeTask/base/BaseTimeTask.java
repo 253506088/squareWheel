@@ -1,6 +1,8 @@
 package com.example.dynamictimetask.timeTask.base;
 
 import com.example.dynamictimetask.database.entity.SpringScheduledCron;
+import com.example.dynamictimetask.database.service.ISpringScheduledCronService;
+import com.example.dynamictimetask.tool.SpringContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +23,7 @@ public class BaseTimeTask implements TimeTask {
      */
     @Override
     public void run() {
-        if ("2".equals(springScheduledCron.getStatus())) {
+        if ("2".equals(this.getSpringScheduledCron().getStatus())) {
             // 任务是禁用状态
             logger.warn("任务【{}】处于禁用状态，无法执行", springScheduledCron.getTaskName());
             return;
@@ -30,6 +32,12 @@ public class BaseTimeTask implements TimeTask {
     }
 
     public SpringScheduledCron getSpringScheduledCron() {
+        //每次获取都更新一下
+        if (this.springScheduledCron != null) {
+            ISpringScheduledCronService springScheduledCronService = SpringContextHolder.getBean(ISpringScheduledCronService.class);
+            SpringScheduledCron newCron = springScheduledCronService.getBaseMapper().selectById(this.springScheduledCron.getId());
+            this.setSpringScheduledCron(newCron);
+        }
         return springScheduledCron;
     }
 
