@@ -92,9 +92,9 @@ public class TimeTaskController {
         return "未找到任务";
     }
 
+
     /**
-     * 获取全部动态定时任务列表
-     *
+     * 杀死bean
      * @return
      */
     @GetMapping(value = "/unRegistryBean", produces = "application/json; charset=utf-8")
@@ -104,13 +104,19 @@ public class TimeTaskController {
         return null;
     }
 
+    /**
+     * 创建bean
+     * @return
+     */
     @GetMapping(value = "/registryBean", produces = "application/json; charset=utf-8")
     public Object registryBean() {
-        String beanName = "timeTaskConfig";
-        this.registryBean(beanName);
-        TimeTaskConfig timeTaskConfig = (TimeTaskConfig)applicationContext.getBean(beanName);
-        timeTaskConfig.configureTasks(new ScheduledTaskRegistrar());
-        Object taskExecutor = applicationContext.getBean("taskExecutor");
+        new Thread(() -> {
+            String beanName = "timeTaskConfig";
+            this.registryBean(beanName);
+            TimeTaskConfig timeTaskConfig = (TimeTaskConfig)applicationContext.getBean(beanName);
+            timeTaskConfig.configureTasks(new ScheduledTaskRegistrar());
+            Object taskExecutor = applicationContext.getBean("taskExecutor");
+        }).start();
         return null;
     }
 
