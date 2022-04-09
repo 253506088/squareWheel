@@ -1,12 +1,10 @@
 package com.example.dynamictimetask.config;
 
 
-import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.dynamictimetask.database.entity.SpringScheduledCron;
 import com.example.dynamictimetask.database.service.ISpringScheduledCronService;
 import com.example.dynamictimetask.timeTask.base.BaseTimeTask;
-import com.example.dynamictimetask.timeTask.base.TimeTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -26,11 +24,11 @@ import java.util.concurrent.Executors;
 /**
  * 动态定时任务配置，这里并非是祖传配置，需要根据你的需求进行修改的
  */
-@Configuration
+@Configuration("timeTaskConfig")
 public class TimeTaskConfig implements SchedulingConfigurer {
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
-    private ApplicationContext context;
+    private ApplicationContext applicationContext;
     @Autowired
     private ISpringScheduledCronService springScheduledCronService;
 
@@ -46,7 +44,7 @@ public class TimeTaskConfig implements SchedulingConfigurer {
                 //根据类名称获取具体的类
                 clazz = Class.forName(springScheduledCron.getCronKey());
                 //根据类获取bean
-                task = context.getBean(clazz);
+                task = applicationContext.getBean(clazz);
             } catch (ClassNotFoundException e) {
                 throw new IllegalArgumentException("spring_scheduled_cron表数据" + springScheduledCron.getCronKey() + "有误", e);
             } catch (BeansException e) {
@@ -94,5 +92,4 @@ public class TimeTaskConfig implements SchedulingConfigurer {
     public Executor taskExecutor() {
         return Executors.newScheduledThreadPool(10);
     }
-
 }
