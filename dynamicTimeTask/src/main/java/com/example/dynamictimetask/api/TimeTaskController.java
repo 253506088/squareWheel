@@ -15,7 +15,6 @@ import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
-import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +29,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * 动态定时任务控制器
  *
  * @author 黑白大彩电
- * @since 2020-07-20
+ * @since 2022-04-09
  */
 @CrossOrigin
 @RestController
