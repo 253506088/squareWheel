@@ -24,6 +24,8 @@ public class MyJobOriginally implements Job {
             //只获取【创建Trigger】时传入的【JobDataMap】
             jobExecutionContext.getTrigger().getJobDataMap();
         }
+        logger.error(jobExecutionContext.getJobDetail().getKey().getName());
+        logger.error(jobExecutionContext.getTrigger().getKey().getName());
         logger.error(
                 "任务执行了，我的家乡是【{}】，我的名字是【{}】，线程id:【{}】",
                 mergedJobDataMap.get("myName"),
