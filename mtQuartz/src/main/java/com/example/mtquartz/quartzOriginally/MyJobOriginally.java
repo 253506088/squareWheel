@@ -18,6 +18,12 @@ public class MyJobOriginally implements Job {
     public void execute(JobExecutionContext jobExecutionContext) {
         //获取在【创建JobDetail、创建Trigger】时传入的【JobDataMap】，这里相同的key也会被覆盖
         JobDataMap mergedJobDataMap = jobExecutionContext.getMergedJobDataMap();
+        if(false){
+            //只获取【创建JobDetail】时传入的【JobDataMap】
+            jobExecutionContext.getJobDetail().getJobDataMap();
+            //只获取【创建Trigger】时传入的【JobDataMap】
+            jobExecutionContext.getTrigger().getJobDataMap();
+        }
         logger.error(
                 "任务执行了，我的家乡是【{}】，我的名字是【{}】，线程id:【{}】",
                 mergedJobDataMap.get("myName"),
