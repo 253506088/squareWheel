@@ -10,6 +10,7 @@ public class Test {
     public static void main(String[] args) throws SchedulerException {
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put("myHome", "山东德州");
+        jobDataMap.put("count", 0);
         //第一步，创建JobDetail，用于指定具体要执行什么
         JobDetail jobDetail = JobBuilder.newJob(MyJobOriginally.class).
                 withIdentity("任务名称", "任务所属组").
