@@ -1,4 +1,4 @@
-package com.example.mtquartz.springBootQuartz;
+package com.example.mtquartz.springBootQuartzRam;
 
 import org.quartz.*;
 import org.springframework.context.annotation.Bean;

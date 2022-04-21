@@ -1,4 +1,4 @@
-package com.example.mtquartz.springBootQuartz;
+package com.example.mtquartz.springBootQuartzRam;
 
 import lombok.SneakyThrows;
 import org.quartz.JobDataMap;
