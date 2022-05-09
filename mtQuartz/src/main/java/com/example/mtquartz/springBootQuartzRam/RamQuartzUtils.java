@@ -1,13 +1,14 @@
-package com.example.mtquartz.springBootQuartzJobStoreTX;
+package com.example.mtquartz.springBootQuartzRam;
 
 import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * spring boot集成quartz，在使用持久化时需要通过这个工具来控制定时任务
+ * spring boot集成quartz，非持久化时使用
  */
-public class QuartzUtils {
-    private static SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+public class RamQuartzUtils {
+    @Autowired
+    private Scheduler scheduler;
 
     /**
      * 添加Job，并启动
@@ -23,16 +24,15 @@ public class QuartzUtils {
      * @Description: 添加一个定时任务
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static void addJob(String jobName,
-                              String jobGroupName,
-                              String triggerName,
-                              String triggerGroupName,
-                              Class jobClass,
-                              String cron,
-                              String jobKey,
-                              String jobValue) {
+    public void addJob(String jobName,
+                       String jobGroupName,
+                       String triggerName,
+                       String triggerGroupName,
+                       Class jobClass,
+                       String cron,
+                       String jobKey,
+                       String jobValue) {
         try {
-            Scheduler sched = schedulerFactory.getScheduler();
             // 任务名，任务组，任务执行类
             JobDetail jobDetail = JobBuilder.newJob(jobClass).
                     usingJobData(jobKey, jobValue).
@@ -50,11 +50,11 @@ public class QuartzUtils {
             CronTrigger trigger = (CronTrigger) triggerBuilder.build();
 
             // 调度容器设置JobDetail和Trigger
-            sched.scheduleJob(jobDetail, trigger);
+            scheduler.scheduleJob(jobDetail, trigger);
 
             // 启动
-            if (!sched.isShutdown()) {
-                sched.start();
+            if (!scheduler.isShutdown()) {
+                scheduler.start();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -74,15 +74,14 @@ public class QuartzUtils {
      * @Description: 添加一个定时任务
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static void addJob(String jobName,
-                              String jobGroupName,
-                              String triggerName,
-                              String triggerGroupName,
-                              Class jobClass,
-                              String cron,
-                              JobDataMap jobDataMap) {
+    public void addJob(String jobName,
+                       String jobGroupName,
+                       String triggerName,
+                       String triggerGroupName,
+                       Class jobClass,
+                       String cron,
+                       JobDataMap jobDataMap) {
         try {
-            Scheduler sched = schedulerFactory.getScheduler();
             // 任务名，任务组，任务执行类
             JobDetail jobDetail = JobBuilder.newJob(jobClass).
                     setJobData(jobDataMap).
@@ -101,11 +100,11 @@ public class QuartzUtils {
             CronTrigger trigger = (CronTrigger) triggerBuilder.build();
 
             // 调度容器设置JobDetail和Trigger
-            sched.scheduleJob(jobDetail, trigger);
+            scheduler.scheduleJob(jobDetail, trigger);
 
             // 启动
-            if (!sched.isShutdown()) {
-                sched.start();
+            if (!scheduler.isShutdown()) {
+                scheduler.start();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -120,11 +119,10 @@ public class QuartzUtils {
      * @param cron             时间设置，参考quartz说明文档
      * @Description: 修改一个任务的触发时间
      */
-    public static void modifyJobTime(String triggerName, String triggerGroupName, String cron) {
+    public void modifyJobTime(String triggerName, String triggerGroupName, String cron) {
         try {
-            Scheduler sched = schedulerFactory.getScheduler();
             TriggerKey triggerKey = TriggerKey.triggerKey(triggerName, triggerGroupName);
-            CronTrigger trigger = (CronTrigger) sched.getTrigger(triggerKey);
+            CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
             if (trigger == null) {
                 return;
             }
@@ -142,7 +140,7 @@ public class QuartzUtils {
                 // 创建Trigger对象
                 trigger = (CronTrigger) triggerBuilder.build();
                 // 方式一 ：修改一个任务的触发时间
-                sched.rescheduleJob(triggerKey, trigger);
+                scheduler.rescheduleJob(triggerKey, trigger);
                 /** 方式一 ：调用 rescheduleJob 结束 */
 
                 /** 方式二：先删除，然后在创建一个新的Job  */
@@ -166,14 +164,13 @@ public class QuartzUtils {
      * @param triggerGroupName
      * @Description: 移除一个任务
      */
-    public static void removeJob(String jobName, String jobGroupName,
-                                 String triggerName, String triggerGroupName) {
+    public void removeJob(String jobName, String jobGroupName,
+                          String triggerName, String triggerGroupName) {
         try {
-            Scheduler sched = schedulerFactory.getScheduler();
             TriggerKey triggerKey = TriggerKey.triggerKey(triggerName, triggerGroupName);
-            sched.pauseTrigger(triggerKey);// 停止触发器
-            sched.unscheduleJob(triggerKey);// 移除触发器
-            sched.deleteJob(JobKey.jobKey(jobName, jobGroupName));// 删除任务
+            scheduler.pauseTrigger(triggerKey);// 停止触发器
+            scheduler.unscheduleJob(triggerKey);// 移除触发器
+            scheduler.deleteJob(JobKey.jobKey(jobName, jobGroupName));// 删除任务
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -182,9 +179,8 @@ public class QuartzUtils {
     /**
      * 暂停任务
      */
-    public static void pauseJob(String jobName, String jobGroupName) {
+    public void pauseJob(String jobName, String jobGroupName) {
         try {
-            Scheduler scheduler = schedulerFactory.getScheduler();
             scheduler.pauseJob(JobKey.jobKey(jobName,jobGroupName));
         } catch (SchedulerException e) {
             throw new RuntimeException("暂停定时任务失败", e);
@@ -194,9 +190,8 @@ public class QuartzUtils {
     /**
      * 恢复任务
      */
-    public static void resumeJob(String jobName, String jobGroupNam) {
+    public void resumeJob(String jobName, String jobGroupNam) {
         try {
-            Scheduler scheduler = schedulerFactory.getScheduler();
             scheduler.resumeJob(JobKey.jobKey(jobName,jobGroupNam));
         } catch (SchedulerException e) {
             throw new RuntimeException("暂停定时任务失败", e);
@@ -206,10 +201,9 @@ public class QuartzUtils {
     /**
      * 启动所有定时任务
      */
-    public static void startJobs() {
+    public void startJobs() {
         try {
-            Scheduler sched = schedulerFactory.getScheduler();
-            sched.start();
+            scheduler.start();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -218,11 +212,10 @@ public class QuartzUtils {
     /**
      * 关闭所有定时任务
      */
-    public static void shutdownJobs() {
+    public void shutdownJobs() {
         try {
-            Scheduler sched = schedulerFactory.getScheduler();
-            if (!sched.isShutdown()) {
-                sched.shutdown();
+            if (!scheduler.isShutdown()) {
+                scheduler.shutdown();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
