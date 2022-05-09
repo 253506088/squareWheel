@@ -1,9 +1,5 @@
 package com.blacktv.shejimoshi.创建型模式.抽象工厂模式;
 
-import com.blacktv.shejimoshi.创建型模式.工厂模式.AceUltraMan;
-import com.blacktv.shejimoshi.创建型模式.工厂模式.BaseUltraMan;
-import com.blacktv.shejimoshi.创建型模式.工厂模式.JackUltraMan;
-import com.blacktv.shejimoshi.创建型模式.工厂模式.ZoffyUltraMan;
 
 /**
  * 工厂的工厂
