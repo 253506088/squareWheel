@@ -1,8 +1,8 @@
 HELP.md
-target/
+被代理目标/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+!**/src/main/**/被代理目标/
+!**/src/test/**/被代理目标/
 
 ### STS ###
 .apt_generated
